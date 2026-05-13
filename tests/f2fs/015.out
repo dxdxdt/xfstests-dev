@@ -101,11 +101,11 @@ Option#98: grpjquota=agrpquota :
 32
 Option#100: prjjquota=aprjquota : 
 32
-Option#102: usrjquota= : 
+Option#102: usrjquota : 
 0
-Option#104: grpjquota= : 
+Option#104: grpjquota : 
 0
-Option#106: prjjquota= : 
+Option#106: prjjquota : 
 0
 Option#108: usrjquota=ausrquota : extra_attr,quota,project_quota
 0
