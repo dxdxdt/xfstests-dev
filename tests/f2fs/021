@@ -21,7 +21,9 @@ quotacheck -uc $SCRATCH_MNT
 _scratch_unmount
 
 _scratch_mount "-o usrjquota=aquota.user,jqfmt=vfsold"
-_scratch_mount "-o remount,usrjquota=,jqfmt=vfsold"
+if ! _try_scratch_mount "-o remount,usrjquota,jqfmt=vfsold" >> $seqres.full 2>&1; then
+	_scratch_mount "-o remount,usrjquota=,jqfmt=vfsold"
+fi
 _scratch_unmount
 
 echo "Silence is golden"
