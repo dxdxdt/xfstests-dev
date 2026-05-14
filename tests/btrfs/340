@@ -16,6 +16,7 @@ _fixed_by_kernel_commit 68d4b3fa18d7 \
 # For the automatic fsck at unmount.
 _require_scratch
 _require_btrfs_qgroup_report
+_require_btrfs_command qgroup show --sync
 
 # This will imply mkfs and enable regular qgroup.
 _require_scratch_qgroup
@@ -39,7 +40,12 @@ _btrfs qgroup show -p --sync $SCRATCH_MNT >> $seqres.full
 # without marking qgroup inconsistent.
 _btrfs subv snap -i 1/1 $SCRATCH_MNT/subv1 $SCRATCH_MNT/snap1
 echo "After quick inherit:" >> $seqres.full
-_btrfs qgroup show -p --sync $SCRATCH_MNT >> $seqres.full
+# Redirect all output to seqres.full including stderr.
+# For older kernels without quick inherit support, it will mark
+# qgroup inconsistent, which will output a warning about the inconsistent
+# numbers. Here we rely on the final btrfs check to catch any qgroup number
+# errors, thus no need to bother that possible warning.
+_btrfs qgroup show -p --sync $SCRATCH_MNT >> $seqres.full 2>&1
 
 echo "Silence is golden"
 _exit 0
