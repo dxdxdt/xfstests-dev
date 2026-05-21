@@ -117,6 +117,8 @@ next_event:
 int main(int argc, char **argv)
 {
 	int fd;
+	int opt;
+	int check = 0;
 
 	char buffer[BUFSIZ];
 
@@ -125,14 +127,29 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+	while ((opt = getopt(argc, argv, "c")) != -1) {
+		switch (opt) {
+		case 'c':
+			check = 1;
+			break;
+		default:
+			fprintf(stderr, "Usage: %s [-c] path\n",
+				argv[0]);
+			exit(EXIT_FAILURE);
+		}
+	}
+
 	fd = fanotify_init(FAN_CLASS_NOTIF|FAN_REPORT_FID, O_RDONLY);
+	if (check)
+		exit(fd < 0);
+
 	if (fd < 0) {
 		perror("fanotify_init");
 		errx(1, "fanotify_init");
 	}
 
 	if (fanotify_mark(fd, FAN_MARK_ADD|FAN_MARK_FILESYSTEM,
-			  FAN_FS_ERROR, AT_FDCWD, argv[1])) {
+			  FAN_FS_ERROR, AT_FDCWD, argv[optind])) {
 		perror("fanotify_mark");
 		errx(1, "fanotify_mark");
 	}
