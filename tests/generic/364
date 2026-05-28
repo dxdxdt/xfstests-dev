@@ -11,6 +11,13 @@
 . ./common/preamble
 _begin_fstest auto quick
 
+_cleanup()
+{
+	cd /
+	rm -f "$tmp.*"
+	rm -f "$TEST_DIR/dio-write-fsync-same-fd"
+}
+
 _require_test
 _require_odirect
 _require_test_program dio-write-fsync-same-fd

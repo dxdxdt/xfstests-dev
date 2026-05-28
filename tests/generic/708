@@ -14,6 +14,13 @@
 . ./common/preamble
 _begin_fstest quick auto mmap
 
+_cleanup()
+{
+	cd /
+	rm -f "$tmp.*"
+	rm -f "$src" "$dst"
+}
+
 _fixed_by_fs_commit btrfs b73a6fd1b1ef \
 		"btrfs: split partial dio bios before submit"
 
