@@ -10,7 +10,7 @@ long filesize;
 int blocksize;
 int count;
 int verbose;
-off64_t fileoffset;
+off_t fileoffset;
 
 void usage(char *progname);
 void writeblk(int fd);
@@ -89,7 +89,7 @@ writeblk(int fd)
 	}
 
 	offset = random() % filesize;
-	if (lseek64(fd, (off64_t)(fileoffset + offset), SEEK_SET) < 0) {
+	if (lseek(fd, (off_t)(fileoffset + offset), SEEK_SET) < 0) {
 		perror("lseek");
 		exit(1);
 	}
@@ -109,7 +109,7 @@ truncfile(int fd)
 	off_t offset;
 
 	offset = random() % filesize;
-	if (ftruncate64(fd, (off64_t)(fileoffset + offset)) < 0) {
+	if (ftruncate(fd, (off_t)(fileoffset + offset)) < 0) {
 		perror("truncate");
 		exit(1);
 	}

@@ -36,8 +36,8 @@ int main(int argc, char **argv) {
 			exit(2);
 		}
 
-		if(ftruncate64(fd, o) < 0) {
-			perror("ftruncate64");
+		if(ftruncate(fd, o) < 0) {
+			perror("ftruncate");
 			exit(3);
 		}
 

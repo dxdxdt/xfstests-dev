@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
 /* Copyright (c) 2022 Fujitsu Limited.  All Rights Reserved. */
 #define _LARGEFILE64_SOURCE
+#include "global.h"
 #include <endian.h>
 #include <fcntl.h>
 #include <stdint.h>
@@ -131,7 +132,7 @@ typedef struct content_hdr content_hdr_t;
 typedef uint64_t xfs_ino_t;
 struct startpt {
 	xfs_ino_t sp_ino;		/* first inode to dump */
-	off64_t sp_offset;	/* bytes to skip in file data fork */
+	off_t sp_offset;	/* bytes to skip in file data fork */
 	int32_t sp_flags;
 	int32_t sp_pad1;
 };

@@ -68,7 +68,7 @@ main(int argc, char **argv)
 			path, strerror(errno));
 		exit(1);
 	}
-	if ((lseek64(fd, offset, SEEK_SET)) < 0) {
+	if ((lseek(fd, offset, SEEK_SET)) < 0) {
 		fprintf(stderr, "%s: error seeking to offset %llu "
 					"on \"%s\": %s\n",
 			progname, (unsigned long long)offset, path, strerror(errno));

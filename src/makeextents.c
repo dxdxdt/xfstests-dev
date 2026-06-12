@@ -127,7 +127,7 @@ main(int argc, char *argv[])
 
 		offset = NUMHOLES_TO_SIZE(i) + fileoffset;
 
-		if (lseek64(fd, offset, SEEK_SET) < 0) {
+		if (lseek(fd, offset, SEEK_SET) < 0) {
 			perror("lseek");
 			return 1;
 		}

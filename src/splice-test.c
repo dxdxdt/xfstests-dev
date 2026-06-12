@@ -18,6 +18,7 @@
 #include <string.h>
 #include <errno.h>
 #include <malloc.h>
+#include <libgen.h>
 
 unsigned int sector_size;
 unsigned int buffer_size;

@@ -32,7 +32,7 @@ void usage(char *progname)
 	exit(1);
 }
 
-void dump_buffer(void *buf, off64_t offset, ssize_t len)
+void dump_buffer(void *buf, off_t offset, ssize_t len)
 {
 	int	i, j;
 	char	*p;

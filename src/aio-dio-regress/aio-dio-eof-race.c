@@ -33,7 +33,7 @@ usage(char *progname)
 void
 dump_buffer(
 	void	*buf,
-	off64_t	offset,
+	off_t	offset,
 	ssize_t	len)
 {
 	int	i, j;

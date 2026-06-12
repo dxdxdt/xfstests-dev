@@ -14,6 +14,7 @@
 #include <libaio.h>
 #include <errno.h>
 #include <sys/time.h>
+#include <libgen.h>
 
 void usage(char *prog)
 {

@@ -14,11 +14,11 @@ main(int argc, char **argv)
 	long		psize, bsize, leaksize = 32 * 1024 * 1024;
 	char		*filename;
 	char		*readbuffer, *writebuffer;
-	off64_t		resvsize;
+	off_t		resvsize;
 	xfs_flock64_t	resvsp;
 
 	psize = bsize = getpagesize();
-	resvsize = bsize * (off64_t) 10000;
+	resvsize = bsize * (off_t) 10000;
 
 	while ((c = getopt(argc, argv, "b:i:l:s:")) != EOF) {
 		switch(c) {
@@ -32,7 +32,7 @@ main(int argc, char **argv)
 			leaksize = atol(optarg);
 			break;
 		case 's':
-			resvsize = (off64_t) atoll(optarg);
+			resvsize = (off_t) atoll(optarg);
 			break;
 		default:
 			err++;

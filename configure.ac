@@ -5,6 +5,7 @@ AC_CONFIG_SRCDIR([src/xfsctl.c])
 AC_PACKAGE_GLOBALS(xfstests)
 AC_PACKAGE_UTILITIES(xfstests)
 
+AC_SYS_LARGEFILE
 AC_CHECK_HEADERS([	assert.h		\
 			bstring.h		\
 			libgen.h		\

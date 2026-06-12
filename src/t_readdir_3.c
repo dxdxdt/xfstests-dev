@@ -1,4 +1,5 @@
 #define _LARGEFILE64_SOURCE
+#include "global.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,12 +36,12 @@ struct dir_ops {
 	void (*getentry)(struct dirent *entry);
 };
 
-static off64_t libc_getpos(void)
+static off_t libc_getpos(void)
 {
 	return telldir(dir);
 }
 
-static void libc_setpos(off64_t pos)
+static void libc_setpos(off_t pos)
 {
 	seekdir(dir, pos);
 }
@@ -68,14 +69,14 @@ static void libc_getentry(struct dirent *entry)
 		ignore_dtype = 1;
 }
 
-static off64_t kernel_getpos(void)
+static off_t kernel_getpos(void)
 {
-	return lseek64(dfd, 0, SEEK_CUR);
+	return lseek(dfd, 0, SEEK_CUR);
 }
 
-static void kernel_setpos(off64_t pos)
+static void kernel_setpos(off_t pos)
 {
-	lseek64(dfd, pos, SEEK_SET);
+	lseek(dfd, pos, SEEK_SET);
 }
 
 static void kernel_getentry(struct dirent *entry)

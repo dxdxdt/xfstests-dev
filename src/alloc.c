@@ -64,7 +64,7 @@ int		blocksize;
 char		*filename;
 
 /* params are in bytes */
-void map(off64_t off, off64_t len)
+void map(off_t off, off_t len)
 {
     struct getbmap	bm[2];
     
@@ -72,7 +72,7 @@ void map(off64_t off, off64_t len)
 
     bm[0].bmv_count = 2;
     bm[0].bmv_offset = OFFTOBB(off);
-    if (len==(off64_t)-1) { /* unsigned... */
+    if (len==(off_t)-1) { /* unsigned... */
         bm[0].bmv_length = -1;
         printf("    MAP off=%lld, len=%lld [%lld-]\n", 
                 (long long)off, (long long)len,
@@ -132,7 +132,7 @@ static int
 linux_preallocate(
 	int			fd,
 	enum linux_opno		opno,
-	const struct flock64	*f)
+	const struct flock	*f)
 {
 	struct stat		sbuf;
 	int			ret;
@@ -169,10 +169,10 @@ main(int argc, char **argv)
 	char		*dirname = NULL;
 	int		done = 0;
 	int		status = 0;
-	struct flock64	f;
-	off64_t		len;
+	struct flock	f;
+	off_t		len;
 	char		line[1024];
-	off64_t		off;
+	off_t		off;
 	int		oflags;
 	static char	*opnames[] = { "freesp",
 				       "allocsp",
@@ -199,7 +199,7 @@ main(int argc, char **argv)
 # error Dont know how to preallocate space!
 #endif
 	int		rflag = 0;
-	struct statvfs64	svfs;
+	struct statvfs	svfs;
 	int		tflag = 0;
         int             nflag = 0;
 	int		unlinkit = 0;
@@ -260,7 +260,7 @@ main(int argc, char **argv)
 		exit(1);
 	}
 	if (!blocksize) {
-		if (fstatvfs64(fd, &svfs) < 0) {
+		if (fstatvfs(fd, &svfs) < 0) {
 			perror(filename);
 			status = 1;
 			goto done;
@@ -399,7 +399,7 @@ bozo!
 			else
 				off = v;
                         printf("    TRUNCATE off=%lld\n", (long long)off);
-			if (ftruncate64(fd, off) < 0) {
+			if (ftruncate(fd, off) < 0) {
 				perror("ftruncate");
 				break;
 			}

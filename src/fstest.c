@@ -105,7 +105,7 @@ static void create_file(const char *dir, int loop, int child, int fnum)
 	}
 
 	if (do_prealloc) {
-		struct flock64 resv;
+		struct flock resv;
 
 		resv.l_whence = 0;
 		resv.l_start = 0;

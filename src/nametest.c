@@ -49,7 +49,7 @@
 #define	DOT_COUNT	100	/* print a '.' every X operations */
 
 struct info {
-	ino64_t	inumber;
+	ino_t	inumber;
 	char	*name;
 	short	namelen;
 	short	exists;
@@ -82,7 +82,7 @@ main(int argc, char *argv[])
 	char *sourcefile, *c;
 	int totalnames, iterations, zeroout;
 	int zone, op, pct_remove=0, pct_create=0, ch, i, retval, fd;
-	struct stat64 statb;
+	struct stat statb;
 	struct info *ip;
 	int seed, linedots;
 
@@ -105,7 +105,7 @@ main(int argc, char *argv[])
 	/*
 	 * Read in the source file.
 	 */
-	if (stat64(sourcefile, &statb) < 0) {
+	if (stat(sourcefile, &statb) < 0) {
 		perror(sourcefile);
 		usage();
 		return 1;
@@ -318,10 +318,10 @@ char *get_name(struct info *ip)
 int
 auto_lookup(struct info *ip)
 {
-	struct stat64 statb;
+	struct stat statb;
 	int retval;
 
-	retval = stat64(get_name(ip), &statb);
+	retval = stat(get_name(ip), &statb);
 	if (retval >= 0) {
 		good_looks++;
 		retval = 0;
@@ -353,7 +353,7 @@ auto_lookup(struct info *ip)
 		retval = errno;
 		printf("\"%s\"(%llu) on lookup: ",
 			ip->name, (unsigned long long)ip->inumber);
-		perror("stat64");
+		perror("stat");
 	}
 	return(retval);
 }
@@ -361,7 +361,7 @@ auto_lookup(struct info *ip)
 int
 auto_create(struct info *ip)
 {
-	struct stat64 statb;
+	struct stat statb;
 	int retval;
 
 	retval = open(get_name(ip), O_RDWR|O_EXCL|O_CREAT, 0666);
@@ -369,8 +369,8 @@ auto_create(struct info *ip)
 		close(retval);
 		good_adds++;
 		retval = 0;
-		if (stat64(ip->name, &statb) < 0) {
-			perror("stat64");
+		if (stat(ip->name, &statb) < 0) {
+			perror("stat");
 			exit(1);
 		}
 		if (ip->exists == 1) {
@@ -386,8 +386,8 @@ auto_create(struct info *ip)
 		bad_adds++;
 		retval = 0;
 		if (ip->exists == 0) {
-			if (stat64(ip->name, &statb) < 0) {
-				perror("stat64");
+			if (stat(ip->name, &statb) < 0) {
+				perror("stat");
 				exit(1);
 			}
 			printf("\"%s\"(%llu) not created, should not exist\n",

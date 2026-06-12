@@ -182,7 +182,7 @@ writeblks(char *fname, int fd, size_t alignment)
 	char *buffer = NULL;
 	int block;
 	int ret;
-	struct flock64 fl;
+	struct flock fl;
 
 	if (!test) {
 		ret = posix_memalign((void **) &buffer, alignment, blocksize);
@@ -230,7 +230,7 @@ writeblks(char *fname, int fd, size_t alignment)
 		}
 		SETBIT(valid, block);
                 if (!test) {
-		        if (lseek64(fd, fileoffset + offset, SEEK_SET) < 0) {
+		        if (lseek(fd, fileoffset + offset, SEEK_SET) < 0) {
 			        perror("lseek");
 			        exit(1);
 		        }
@@ -278,7 +278,7 @@ readblks(int fd, size_t alignment)
 	if (verbose)
 		printf("\n");
 
-	if (lseek64(fd, fileoffset, SEEK_SET) < 0) {
+	if (lseek(fd, fileoffset, SEEK_SET) < 0) {
 		perror("lseek");
 		exit(1);
 	}

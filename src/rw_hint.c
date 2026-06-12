@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!strcmp(argv[2], "not_set"))
-		hint = RWH_WRITE_LIFE_NOT_SET;
+		hint = RWF_WRITE_LIFE_NOT_SET;
 	else if (!strcmp(argv[2], "none"))
 		hint = RWH_WRITE_LIFE_NONE;
 	else if (!strcmp(argv[2], "short"))

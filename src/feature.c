@@ -7,7 +7,7 @@
 /*
  * Test for filesystem features on given mount point or device
  *   -c  test for 32bit chown support (via libc)
- *   -t  test for working rlimit/ftruncate64 (via libc)
+ *   -t  test for working rlimit/ftruncate (via libc)
  *   -q  test for quota support (kernel compile option)
  *   -u  test for user quota enforcement support (mount option)
  *   -p  test for project quota enforcement support (mount option)
@@ -74,11 +74,11 @@ usage(void)
 
 int check_big_ID(char *filename)
 {
-	struct stat64	sbuf;
+	struct stat	sbuf;
 
-	memset(&sbuf, 0, sizeof(struct stat64));
-	if (lstat64(filename, &sbuf) < 0) {
-		fprintf(stderr, "lstat64 failed on ");
+	memset(&sbuf, 0, sizeof(struct stat));
+	if (lstat(filename, &sbuf) < 0) {
+		fprintf(stderr, "lstat failed on ");
 		perror(filename);
 		return(1);
 	}
@@ -87,7 +87,7 @@ int check_big_ID(char *filename)
 	if ((uint32_t)sbuf.st_uid == 98789 || (uint32_t)sbuf.st_gid == 98789)
 		return(0);
 	if (verbose)
-		fprintf(stderr, "lstat64 on %s gave uid=%d, gid=%d\n",
+		fprintf(stderr, "lstat on %s gave uid=%d, gid=%d\n",
 			filename, (int)sbuf.st_uid, (int)sbuf.st_gid);
 	return(1);
 }
@@ -110,16 +110,16 @@ haschown32(char *filename)
 }
 
 int
-hastruncate64(char *filename)
+hastruncate(char *filename)
 {
-	struct rlimit64 rlimit64;
-	off64_t bigoff = 4294967307LL;	/* > 2^32 */
-	struct stat64 bigst;
+	struct rlimit rlimit;
+	off_t bigoff = 4294967307LL;	/* > 2^32 */
+	struct stat bigst;
 	int fd;
 
-	getrlimit64(RLIMIT_FSIZE, &rlimit64);
-	rlimit64.rlim_cur = RLIM64_INFINITY;
-	setrlimit64(RLIMIT_FSIZE, &rlimit64);
+	getrlimit(RLIMIT_FSIZE, &rlimit);
+	rlimit.rlim_cur = RLIM_INFINITY;
+	setrlimit(RLIMIT_FSIZE, &rlimit);
 
 	signal(SIGXFSZ, SIG_IGN);
 
@@ -129,17 +129,17 @@ hastruncate64(char *filename)
 		return(1);
 	}
 
-	if (ftruncate64(fd, bigoff) < 0)
+	if (ftruncate(fd, bigoff) < 0)
 		return(1);
 
-	if (fstat64(fd, &bigst) < 0) {
-		fprintf(stderr, "fstat64 failed on ");
+	if (fstat(fd, &bigst) < 0) {
+		fprintf(stderr, "fstat failed on ");
 		perror(filename);
 		return(1);
 	}
 
 	if (verbose)
-		fprintf(stderr, "fstat64 on %s gave sz=%lld (truncsz=%lld)\n",
+		fprintf(stderr, "fstat on %s gave sz=%lld (truncsz=%lld)\n",
 			filename, (long long)bigst.st_size, (long long)bigoff);
 
 	if (bigst.st_size != bigoff)
@@ -364,7 +364,7 @@ main(int argc, char **argv)
 	if (cflag)
 		return(haschown32(fs));
 	if (tflag)
-		return(hastruncate64(fs));
+		return(hastruncate(fs));
 	if (qflag)
 		return(hasxfsquota(0, 0, fs));
 	if (gflag)

@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
+#include <libgen.h>
 
 #define PAGE(a) ((a)*0x1000)
 #define STRLEN 256

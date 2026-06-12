@@ -37,14 +37,14 @@ timesince(long timesec)
 void
 usage(void)
 {
-	fprintf(stderr, "Usage: lstat64 [-t] filename ...\n");
+	fprintf(stderr, "Usage: lstat [-t] filename ...\n");
 	exit(1);
 }
 
 int
 main(int argc, char **argv)
 {
-	struct stat64	sbuf;
+	struct stat	sbuf;
 	int		i, c;
 	int		terse_flag = 0;
 
@@ -67,7 +67,7 @@ main(int argc, char **argv)
 	for (i = optind; i < argc; i++) {
 		char mode[] = "----------";
 
-		if( lstat64(argv[i], &sbuf) < 0) {
+		if( lstat(argv[i], &sbuf) < 0) {
 			perror(argv[i]);
 			continue;
 		}

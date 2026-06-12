@@ -158,7 +158,7 @@ static int do_fallocate(int fd, off_t offset, off_t length, int mode)
  * Synchnorize all dirty pages in the file range starting from
  * offset to nbytes length.
  */
-static int do_sync_dirty_pages(int fd, off64_t offset, off64_t nbytes)
+static int do_sync_dirty_pages(int fd, off_t offset, off_t nbytes)
 {
 	int ret;
 

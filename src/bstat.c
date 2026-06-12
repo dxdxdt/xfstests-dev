@@ -5,6 +5,7 @@
  */
 
 #include "global.h"
+#include <stdint.h>
 #include <xfs/jdm.h>
 #include <pthread.h>
 
@@ -62,7 +63,7 @@ static inline int fls(int x)
 	return r;
 }
 
-static inline int xfs_highbit32(__uint32_t v)
+static inline int xfs_highbit32(uint32_t v)
 {
 	return fls(v) - 1;
 }
@@ -99,7 +100,7 @@ printbstat(struct xfs_bstat *sp)
 }
 
 void
-printstat(struct stat64 *sp)
+printstat(struct stat *sp)
 {
 	printf("ino %lld mode %#o nlink %d uid %d gid %d rdev %#x\n",
 		(long long)sp->st_ino, (unsigned int)sp->st_mode, (int)sp->st_nlink,
@@ -164,7 +165,7 @@ do_bstat(
 			if (statit) {
 				char *cc_readlinkbufp;
 				int cc_readlinkbufsz;
-				struct stat64	sb;
+				struct stat	sb;
 				int nread;
 				int		fd;
 
@@ -210,7 +211,7 @@ do_bstat(
 							strerror(errno));
 						continue;
 					}
-					if (fstat64(fd, &sb) < 0) {
+					if (fstat(fd, &sb) < 0) {
 						printf(
 					"unable to stat ino %lld: %s\n",
 							(long long)t[i].bs_ino,
@@ -280,7 +281,7 @@ do_bstat_thread(
 /*
  * Always show full working:
  *
- *   XFS_AGINO_TO_INO(mp,a,i)        \
+ *   XFS_AGino_tO_INO(mp,a,i)        \
  *           (((xfs_ino_t)(a) << XFS_INO_AGINO_BITS(mp)) | (i))
  *
  *	i always zero, so:
@@ -298,7 +299,7 @@ do_bstat_thread(
  */
 #define FSGEOM_INOPBLOG(fsg) \
 		(xfs_highbit32((fsg).blocksize / (fsg).inodesize))
-#define FSGEOM_AGINO_TO_INO(fsg, a, i) \
+#define FSGEOM_AGino_tO_INO(fsg, a, i) \
 	(((__u64)(a) << (FSGEOM_INOPBLOG(fsg) + \
 			libxfs_log2_roundup((fsg).agblocks))) | (i))
 
@@ -347,7 +348,7 @@ do_threads(
 	for (i = 0; i < geom.agcount; i++) {
 		__u64 last;
 
-		last = FSGEOM_AGINO_TO_INO(geom, i,
+		last = FSGEOM_AGino_tO_INO(geom, i,
 					   FSGEOM_OFFBNO_TO_AGINO(geom,
 						       geom.agblocks - 1, 0));
 
@@ -355,7 +356,7 @@ do_threads(
 			i--;
 			continue;
 		}
-		first = MAX(first, FSGEOM_AGINO_TO_INO(geom, i, 0));
+		first = MAX(first, FSGEOM_AGino_tO_INO(geom, i, 0));
 
 		targs[i].fsfd = fsfd;
 		targs[i].fshandlep = fshandlep;
