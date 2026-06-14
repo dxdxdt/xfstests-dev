@@ -28,6 +28,18 @@ _require_block_device "${SCRATCH_DEV}"
 # not all the FS support zoned block device
 _require_non_zoned_device "${SCRATCH_DEV}"
 
+mkfs_preop=""
+mkfs_preargs=""
+mkfs_postargs=""
+
+case "$FSTYP" in
+exfat)
+	# For backward compatibility, mkfs.exfat refuses to format only when run
+	# from a tty. This env var should override the behaviour if supported.
+	mkfs_preop="EXFAT_TTY_OVERRIDE=1"
+	;;
+esac
+
 echo "Silence is golden."
 for fs in `echo ${MKFS_PROG}.* | sed -e "s:${MKFS_PROG}.::g"`
 do
@@ -83,7 +95,8 @@ do
 		# next, ensure we don't overwrite it
 
 		echo "=== Attempting $FSTYP overwrite of $fs..." >>$seqres.full
-		${MKFS_PROG} -t $FSTYP $SCRATCH_DEV >>$seqres.full 2>&1
+		eval $mkfs_preop ${MKFS_PROG} -t $FSTYP $mkfs_preargs $SCRATCH_DEV $mkfs_postargs \
+			>>$seqres.full 2>&1
 
 		[ $? -eq 0 ] && echo "Failed - overwrote fs type ${fs}!"
 	else
