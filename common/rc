@@ -6217,6 +6217,78 @@ _require_fanotify_ioerrors()
 	_notrun "$FSTYP does not support fanotify ioerrors"
 }
 
+# Workaround for Musl: print the newline character in the last argument in a single syscall
+#
+# Musl translates the following:
+#
+# echo 123 > /proc/self/oom_score_adj
+#
+# to
+#
+#	writev(["123", "\n"])
+#
+# which leads to the kernel procfs returning EINVAL.
+#
+# This shell function appends the newline character to the last string in the argument vector so
+# that Musl wouldn't chop the newline up as a separate iov.
+#
+# Link: https://www.openwall.com/lists/musl/2013/05/05/1
+_echo_nochop()
+{
+	local -a args
+	local nl=true
+	local escape=false
+	local cnt="${#@}"
+	local i=0
+	local isopt
+	local this_nl
+	local this_escape
+
+	# scan for options
+	for a in "$@"; do
+		let 'i++'
+
+		if [ "${a:0:1}" = '-' ] && [ "${#a}" -gt 1 ]; then
+			isopt=true
+			this_nl="$nl"
+			this_escape="$escape"
+
+			for (( j = 1; j < ${#a}; j++ )); do
+				case "${a:$j:1}" in
+					n)
+						this_nl=true
+						;;
+					e)
+						this_escape=true
+						;;
+					E)
+						this_escape=false
+						;;
+					*)
+						isopt=false
+						;;
+				esac
+			done
+
+			if "$isopt"; then
+				nl="$this_nl"
+				escape="$this_escape"
+
+				continue
+			fi
+		fi
+
+		if [ "$cnt" -eq "$i" ] && "$nl"; then
+			args+=("$a
+")
+		else
+			args+=("$a")
+		fi
+	done
+
+	/bin/echo -n "${args[@]}"
+}
+
 ################################################################################
 # make sure this script returns success
 /bin/true

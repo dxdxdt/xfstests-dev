@@ -21,7 +21,7 @@ if [ -n "${FSTESTS_ISOL}" ]; then
 
 	# Allow the test to become a target of the oom killer
 	oom_knob="/proc/self/oom_score_adj"
-	test -w "${oom_knob}" && echo 250 > "${oom_knob}"
+	test -w "${oom_knob}" && echo -n 250 > "${oom_knob}"
 
 	exec "$@"
 fi

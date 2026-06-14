@@ -682,7 +682,7 @@ test $? -eq 77 && HAVE_SYSTEMD_SCOPES=yes
 # Make the check script unattractive to the OOM killer...
 OOM_SCORE_ADJ="/proc/self/oom_score_adj"
 function _adjust_oom_score() {
-	test -w "${OOM_SCORE_ADJ}" && echo "$1" > "${OOM_SCORE_ADJ}"
+	test -w "${OOM_SCORE_ADJ}" && _echo_nochop "$1" > "${OOM_SCORE_ADJ}"
 }
 _adjust_oom_score -500
 
@@ -698,19 +698,25 @@ _adjust_oom_score -500
 # when systemd tells them to terminate (e.g. programs stuck in D state when
 # systemd sends SIGKILL), so we use reset-failed to tear down the scope.
 _run_seq() {
-	local cmd=(bash -c "test -w ${OOM_SCORE_ADJ} && echo 250 > ${OOM_SCORE_ADJ}; exec ./$seq")
+	local -r OOM_SCORE=250
+	local saved_oom_score
 	local res
 
 	if [ -n "${HAVE_SYSTEMD_SCOPES}" ]; then
 		local unit="$(systemd-escape "fs$seq").scope"
 		systemctl reset-failed "${unit}" &> /dev/null
-		systemd-run --quiet --unit "${unit}" --scope "${cmd[@]}"
+		systemd-run --quiet --unit "${unit}" -p "OOMScoreAdjust=$OOM_SCORE" --scope "./$seq"
 		res=$?
 		systemctl stop "${unit}" &> /dev/null
-		return "${res}"
 	else
-		"${cmd[@]}"
+		saved_oom_score="$(cat ${OOM_SCORE_ADJ} 2> /dev/null)"
+		_adjust_oom_score $OOM_SCORE
+		./$seq
+		res=$?
+		[ ! -z "$saved_oom_score" ] && _adjust_oom_score "${saved_oom_score}"
 	fi
+
+	return "${res}"
 }
 
 _detect_kmemleak
