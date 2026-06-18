@@ -72,8 +72,10 @@ do
 		postargs=2000
 		;;
 	ntfs)
-		# "quick" format that doesn't zero the entire device
-		postargs="--quick"
+		# "quick" format that doesn't zero the entire device. Use -F so
+		# that NTFS-3G mkfs formats the volume even if the scratch
+		# blockdev is not a partition.
+		postargs="--quick --force"
 		;;
 	reiser4)
 		preop="echo y |"
